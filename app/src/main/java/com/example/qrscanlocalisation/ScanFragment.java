@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class ScanFragment extends Fragment {
+    private PageViewModel pageViewModel;
 
     public ScanFragment() {
         // Required empty public constructor
@@ -33,6 +35,9 @@ public class ScanFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // initialise ViewModel here
+        pageViewModel = ViewModelProviders.of(requireActivity()).get(PageViewModel.class);
 
         scanCode();
     }
@@ -68,16 +73,20 @@ public class ScanFragment extends Fragment {
             builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
+
                     String url = result.getContents();
 
                     Uri uri = Uri.parse(url);
                     if (url.contains("geo")) {
-                        uri = Uri.parse("http://maps.google.com/maps?q=loc:" + url.replace("geo:", ""));
-                    }
-                    Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
+                        // Envoie les données à la page suivante
+                        pageViewModel.setCoordinate(url);
+                        //uri = Uri.parse("http://maps.google.com/maps?q=loc:" + url.replace("geo:", ""));
+                    } else {
+                        Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
 
-                    // Lance sur le lien
-                    startActivity(urlIntent);
+                        // Lance sur le lien
+                        startActivity(urlIntent);
+                    }
                 }
             });
 
