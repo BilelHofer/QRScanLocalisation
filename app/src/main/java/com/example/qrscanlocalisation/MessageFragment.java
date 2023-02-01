@@ -1,19 +1,15 @@
 package com.example.qrscanlocalisation;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.Manifest;
-
-import java.util.Objects;
-
 public class MessageFragment extends Fragment {
 
     private PageViewModel pageViewModel;
@@ -35,15 +27,14 @@ public class MessageFragment extends Fragment {
     private String phoneNumber = "";
     private Handler mHandler = new Handler();
 
-    public MessageFragment() {
-        // Required empty public constructor
-    }
+    // constructor
+    public MessageFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialise ViewModel
+        // initialise le ViewModel
         pageViewModel = ViewModelProviders.of(requireActivity()).get(PageViewModel.class);
     }
 
@@ -53,6 +44,7 @@ public class MessageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.message_fragment, container, false);
 
+        // initialise les composants
         textView = view.findViewById(R.id.text_view);
         editText = view.findViewById(R.id.edit_text);
         button = view.findViewById(R.id.btn_send);
@@ -93,7 +85,11 @@ public class MessageFragment extends Fragment {
      */
     protected void sendSMSMessage() {
         SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(phoneNumber, null, messageContent, null, null);
+        String[] parts = messageContent.split(",");
+        float x = Float.parseFloat(parts[0].split(":")[1].trim());
+        float y = Float.parseFloat(parts[1].trim());
+        String message = "https://www.google.com/maps/search/?api=1&query=" + x + "," + y;
+        smsManager.sendTextMessage(phoneNumber, null, messageContent + "\n" + message, null, null);
         Toast.makeText(getContext(), "Message envoyé", Toast.LENGTH_SHORT).show();
     }
 

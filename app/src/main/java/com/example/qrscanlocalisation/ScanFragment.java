@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,21 +21,20 @@ import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ScanFragment#newInstance} factory method to
+ * Use the {@link ScanFragment} factory method to
  * create an instance of this fragment.
  */
 public class ScanFragment extends Fragment {
     private PageViewModel pageViewModel;
 
-    public ScanFragment() {
-        // Required empty public constructor
-    }
+    // constructeur
+    public ScanFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialise ViewModel here
+        // initialise le ViewModel
         pageViewModel = ViewModelProviders.of(requireActivity()).get(PageViewModel.class);
 
         scanCode();
@@ -80,13 +78,13 @@ public class ScanFragment extends Fragment {
                     if (url.contains("geo")) {
                         // Envoie les données à la page suivante
                         pageViewModel.setCoordinate(url);
-                        //uri = Uri.parse("http://maps.google.com/maps?q=loc:" + url.replace("geo:", ""));
                     } else {
                         Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
 
                         // Lance sur le lien
                         startActivity(urlIntent);
                     }
+                    dialogInterface.dismiss();
                 }
             });
 

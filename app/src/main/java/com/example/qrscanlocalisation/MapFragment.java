@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ public class MapFragment extends Fragment {
     private LatLng lat;
     private LatLng oldLat;
     private PageViewModel pageViewModel;
-
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     private Handler mHandler = new Handler();
@@ -35,7 +33,6 @@ public class MapFragment extends Fragment {
 
     // constructor
     public MapFragment(LatLng _lat) {
-        // Required empty public constructor
         lat = _lat;
         oldLat = new LatLng(0, 0);
     }
@@ -44,14 +41,18 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialise ViewModel
+        // initialise le ViewModel
         pageViewModel = ViewModelProviders.of(requireActivity()).get(PageViewModel.class);
 
+        // handler qui permet de mettre à jour la position
         mRunnable = new Runnable() {
             @Override
             public void run() {
                 if (oldLat != lat) {
-                    pageViewModel.setCoordinateLat("Ma localisation: " + String.valueOf(df.format(lat.latitude)) + " : " + String.valueOf(df.format(lat.longitude)));
+                    String message = "Ma localisation: " + df.format(lat.latitude) + "/" + df.format(lat.longitude);
+                    message = message.replaceAll(",", ".");
+                    message = message.replaceAll("/", ",");
+                    pageViewModel.setCoordinateLat(message);
                     oldLat = lat;
                 }
 
@@ -74,46 +75,46 @@ public class MapFragment extends Fragment {
         SupportMapFragment supportMapFragment = (SupportMapFragment)
                 getChildFragmentManager().findFragmentById(R.id.map);
 
-        // Async map
+        // Crée une map ascynchrone
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 // Crée le marker de la position
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(lat);
-                markerOptions.title(lat.latitude + " : " + lat.longitude);
-                // Anmiating to zoom the marker
+                markerOptions.title(lat.latitude + " . " + lat.longitude);
+                // Anim le zoom sur le marker
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         lat, 10
                 ));
-                // Add marker on map
+                // Ajoute le marker sur la map
                 googleMap.addMarker(markerOptions);
 
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        // When click on map
                         // Initialize marker options
                         MarkerOptions markerOptions = new MarkerOptions();
-                        // Set position of marker
+                        // Place la position du marker
                         markerOptions.position(latLng);
                         // Upadte this.lat
                         lat = latLng;
-                        // Set title of marker
-                        markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                        // Remove all marker
+                        // Met en place le titre du marker
+                        markerOptions.title(latLng.latitude + "," + latLng.longitude);
+                        // Supprime le marker précédent
                         googleMap.clear();
-                        // Anmiating to zoom the marker
+                        // Anim le zoom sur le marker
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 latLng, 10
                         ));
-                        // Add marker on map
+                        // Ajoute le marker sur la map
                         googleMap.addMarker(markerOptions);
                     };
                 });
             }
         });
 
+        // Initialise le bouton de retour
         Button backButton = view.findViewById(R.id.btn_back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
