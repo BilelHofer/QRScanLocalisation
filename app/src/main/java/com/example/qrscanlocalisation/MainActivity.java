@@ -36,12 +36,19 @@ public class MainActivity extends AppCompatActivity {
             // Crée la coordonnée
             LatLng coordinate = new LatLng(x, y);
 
-            // Remplacer le fragment scan par le fragment de map
+            // Remplacer le fragment scan par le fragment de map et de message
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new MapFragment(coordinate)).commit();
             getSupportFragmentManager().beginTransaction().add(R.id.container, new MessageFragment()).commit();
         });
 
         // Affiche le scan au démarrage
         getSupportFragmentManager().beginTransaction().add(R.id.container, new ScanFragment()).commit();
+    }
+
+    /**
+     * Permet de retourner à la page de scan
+     */
+    public void goHome() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new ScanFragment()).commit();
     }
 }

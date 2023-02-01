@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,7 +51,7 @@ public class MapFragment extends Fragment {
             @Override
             public void run() {
                 if (oldLat != lat) {
-                    pageViewModel.setCoordinateLat("Ma localisation: " + String.valueOf(df.format(lat.latitude)) + "," + String.valueOf(df.format(lat.longitude)));
+                    pageViewModel.setCoordinateLat("Ma localisation: " + String.valueOf(df.format(lat.latitude)) + " : " + String.valueOf(df.format(lat.longitude)));
                     oldLat = lat;
                 }
 
@@ -110,6 +111,14 @@ public class MapFragment extends Fragment {
                         googleMap.addMarker(markerOptions);
                     };
                 });
+            }
+        });
+
+        Button backButton = view.findViewById(R.id.btn_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).goHome();
             }
         });
 
